@@ -4,7 +4,7 @@ function init() {
          width: 1000,
          height: 1000,
          cellSize:67, 
-         interval:300, // grid cell size based on calculation
+         interval:200, // grid cell size based on calculation
     }
     snake ={
                             intitLen:5,
