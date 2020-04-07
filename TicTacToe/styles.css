@@ -1,0 +1,54 @@
+*, *::after , *::before{
+    box-sizing:border-box ;
+}
+
+:root{
+    /* css variables */
+    --cell-size: 100px; 
+    /* size of the X and O's */
+    --mark-size:cal(var(--cell-size)*0.9);
+}
+body{
+    margin: 0;
+
+}
+
+.board{
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    justify-content: center;
+    /* the following 2 align the actual individual things inside the cell and not the cell itself to the center*/
+    justify-items: center;
+    align-items: center;
+    align-content: center;
+    /* 3 auto sized columns repeat in our grid according cell size */
+    grid-template-columns: repeat(3,auto); 
+}
+
+.cell{
+    width: var(--cell-size);
+    height: var(--cell-size);
+    border: 1px solid black;
+   
+
+}
+.cell:first-child,
+.cell:nth-child(2),
+.cell:nth-child(3){
+    border-top: none;
+}
+
+.cell:nth-child(3n+1){
+    border-left: none;
+}
+
+.cell:nth-child(3n+3){
+    border-right: none;
+}
+
+.cell:last-child,
+.cell:nth-child(7),
+.cell:nth-child(8){
+    border-bottom: none;
+}
