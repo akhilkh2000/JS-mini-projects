@@ -44,7 +44,7 @@ body{
 }
 
 .cell:nth-child(3n+3){
-    border-right: none;
+    border-right: none; 
 }
 
 .cell:last-child,
