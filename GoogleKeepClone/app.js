@@ -2,6 +2,9 @@ class App{
     constructor(){
         console.log("app works!");
         this.notes = new Array(); // notes array
+        this.title = ''; // to store current note text and title
+        this.text = ''; 
+        this.id ='';
 
 
         //DOM - elements
@@ -12,23 +15,30 @@ class App{
         this.$formButtons = document.querySelector('#form-buttons');
         this.$formCloseButton = document.querySelector("#form-close-button");
         this.$placeHolder = document.querySelector('#placeholder');
-
+        this.$modal = document.querySelector(".modal");
+        this.$modalTitle = document.querySelector(".modal-title");
+        this.$modalText = document.querySelector('.modal-text');
+        this.$ModalCloseButton = document.querySelector('.modal-close-button');
         this.addEventListeners(); // to make sure all events are added when app starts up
     }
 
     //method where we add all event listeners used in our app
 
     addEventListeners(){
+        //body click event
         document.body.addEventListener('click',event =>{
             this.handleFormClick(event);
+            this.selectNote(event);
+            this.openModal(event);
+           
         });
-        // when we submit a form an automatic page refresh happens , default behaviour as usually make a request to a server
-        // but we have to  prevent the default behaviour
+        
+        // form event listener
         this.$form.addEventListener('submit',event => {
-            event.preventDefault(); // prevents default refresh
+            event.preventDefault(); // prevents default refresh of page when form is submitted
             const title  = this.$noteTitle.value;
             const text = this.$noteText.value;
-            // we basically need to verify if user has at least typed the note title or note text
+
             const hasNote = title || text;
             if(hasNote){
                 //add note
@@ -41,9 +51,14 @@ class App{
         // for close event
         this.$formCloseButton.addEventListener('click',event =>{
             event.stopPropagation(); // so that it doesnt trigger our click event on body 
-            this.closeForm();
+            this.closeForm(); 
             // console.log("closed");
         });
+
+        //modal close button
+        this.$ModalCloseButton.addEventListener('click',event =>{
+            this.closeModal(event);
+        })
 
     }
 
@@ -71,6 +86,25 @@ class App{
         this.$formButtons.style.display = 'block';
     }
 
+    openModal(event){
+        // check if the element that fired the event is closest to the note class
+        if(event.target.closest('.note')){
+           // toggle class opne-modal on it to show the modal on click of a note
+           this.$modal.classList.toggle('open-modal');
+           this.$modalTitle.value = this.title;
+           this.$modalText.value = this.text;
+
+           
+        }
+    }
+
+    closeModal(event){
+        // edit the note and close the modal
+        this.editNote();
+        this.$modal.classList.toggle('open-modal');
+
+    }
+
     closeForm(){
         this.$form.classList.remove('form-open');
         this.$noteTitle.style.display = 'none'; 
@@ -96,6 +130,30 @@ class App{
          this.closeForm();
     }
 
+    editNote(){
+        const title = this.$modalTitle.value;
+        const text = this.$modalText.value;
+        this.notes =  this.notes.map((note)=>{
+            if(note.id === Number(this.id)){
+               return {...note , title , text} ; //updating title and text
+            }
+            else{
+                return note;
+            }
+        });
+        this.displayNotes();
+    }
+
+    selectNote(event){
+        const $selectedNote = event.target.closest('.note');
+        if(!$selectedNote) // if not clicked on note then we shouldnt try to get its children,etc.
+            return ;
+        const [$noteTitle,$noteText] = $selectedNote.children; // gets children of the div
+        this.title = $noteTitle.innerText;
+        this.text = $noteText.innerText;
+        this.id = $selectedNote.dataset.id; // gets the data element id (AS A STRING)
+    }
+
     displayNotes(){
             const hasNotes = this.notes.length > 0;
             // if we have notes in our array we hide our placeholder text
@@ -105,8 +163,8 @@ class App{
                 this.$placeHolder.style.display = "flex";
             }
 
-           this.$notes.innerHTML = this.notes.map(note => `
-             <div style ="background : ${note.color};" class = "note">
+           this.$notes.innerHTML = this.notes.map(note => ` 
+             <div style ="background : ${note.color};" class = "note" data-id = "${note.id}"> 
                 <div class = "${note.title && 'note-title'}">${note.title}</div>
                 <div class ="note-text">${note.text}</div>
                 <div class = "toolbar-container">
@@ -120,7 +178,7 @@ class App{
             `) .join("");
 
             //.join to join everything into an empty string is used to get rid of the commasbetween array elements that is shown on the webpage if we don't use it
-
+            //data - used to store custom/private data to the page or application
     }
    
 }
