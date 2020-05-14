@@ -19,6 +19,7 @@ class App{
         this.$modalTitle = document.querySelector(".modal-title");
         this.$modalText = document.querySelector('.modal-text');
         this.$ModalCloseButton = document.querySelector('.modal-close-button');
+        this.$colorTooltip = document.querySelector('#color-tooltip');
         this.addEventListeners(); // to make sure all events are added when app starts up
     }
 
@@ -32,6 +33,41 @@ class App{
             this.openModal(event);
            
         });
+
+        // body mouse event
+        document.body.addEventListener('mouseover',event =>{
+            this.openTooltip(event);
+        });
+
+        //body mouseover event 
+
+        document.body.addEventListener('mouseout',event =>{
+            this.closeTooltip(event);
+        });
+
+        //color tooltip 
+        this.$colorTooltip.addEventListener('mouseover', event =>{
+           // console.log(event.target);
+            // we need a reference to color tooltip here so we cant use arrow function as it has a lexical 'this'
+        //    console.log(this.$colorTooltip);
+           this.$colorTooltip.style.display = 'flex';
+        });
+
+        this.$colorTooltip.addEventListener('mouseout', event =>{
+            //console.log(event.target);
+            this.$colorTooltip.style.display = 'none';
+        });
+
+        //noteColor change click listener
+        this.$colorTooltip.addEventListener('click',event =>{
+            const color =  event.target.dataset.color;
+            if(color){
+                this.changeNoteColor(color);
+            }
+          
+        })
+
+
         
         // form event listener
         this.$form.addEventListener('submit',event => {
@@ -105,6 +141,29 @@ class App{
 
     }
 
+    openTooltip(event){
+        if(event.target.matches('.toolbar-color')){
+            const $parentDiv  = event.target.parentElement.parentElement.parentElement;
+            // to get notes id
+            this.id = $parentDiv.dataset.id;
+            // position of tooltip should be taken care of based on how much user has scrolled
+            const noteCoords = event.target.getBoundingClientRect();
+            const horizontal = noteCoords.left + window.scrollX;
+            const vertical = noteCoords.top + window.scrollY +60;
+            this.$colorTooltip.style.transform = `translate(${horizontal}px, ${vertical}px)`;
+            this.$colorTooltip.style.display = 'flex';
+
+
+        }
+    }
+
+    closeTooltip(event){
+        // console.log(event.target);
+        if(event.target.matches('.toolbar-color')){
+            this.$colorTooltip.style.display = 'none';
+        }
+    }
+
     closeForm(){
         this.$form.classList.remove('form-open');
         this.$noteTitle.style.display = 'none'; 
@@ -142,6 +201,20 @@ class App{
             }
         });
         this.displayNotes();
+    }
+
+    changeNoteColor(color){
+        console.log(this.id);
+            this.notes = this.notes.map((note) =>{
+                if(note.id === Number(this.id)){
+                    return {...note , color}; //updating the color
+                }
+                else{
+                    return note;
+                }
+            });
+
+            this.displayNotes();
     }
 
     selectNote(event){
