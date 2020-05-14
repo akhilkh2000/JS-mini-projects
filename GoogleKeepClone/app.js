@@ -1,7 +1,7 @@
 class App{
     constructor(){
         console.log("app works!");
-        this.notes = new Array(); // notes array
+        this.notes = JSON.parse(localStorage.getItem('notes'))  || [] ; // notes array
         this.title = ''; // to store current note text and title
         this.text = ''; 
         this.id ='';
@@ -20,6 +20,8 @@ class App{
         this.$modalText = document.querySelector('.modal-text');
         this.$ModalCloseButton = document.querySelector('.modal-close-button');
         this.$colorTooltip = document.querySelector('#color-tooltip');
+
+        this.render();
         this.addEventListeners(); // to make sure all events are added when app starts up
     }
 
@@ -31,6 +33,8 @@ class App{
             this.handleFormClick(event);
             this.selectNote(event);
             this.openModal(event);
+            this.deleteNote(event);
+            
            
         });
 
@@ -66,6 +70,7 @@ class App{
             }
           
         })
+
 
 
         
@@ -123,6 +128,7 @@ class App{
     }
 
     openModal(event){
+        if(event.target.closest('.toolbar')) return; // if we click on toolbar it shouldn't open modal
         // check if the element that fired the event is closest to the note class
         if(event.target.closest('.note')){
            // toggle class opne-modal on it to show the modal on click of a note
@@ -185,8 +191,30 @@ class App{
          };
         this.notes = [...this.notes , newNote]; //using spread operator
           console.log(this.notes);
-         this.displayNotes();
+         this.render();
          this.closeForm();
+    }
+
+    render(){
+        this.saveNotes();
+        this.displayNotes();
+    }
+
+    saveNotes(){
+        localStorage.setItem('notes',JSON.stringify(this.notes));
+    }
+    deleteNote(event){
+        if(event.target.matches('.toolbar-delete')){
+            event.stopPropagation(); // so that it doesnt open modal
+         const choice = confirm('Are you sure you want to delete this note ?');
+         if(!choice) return;
+         const id  = event.target.dataset.id; // we dont need to upadte this.id because no other function needs access to it
+         this.notes = this.notes.filter(note =>{
+            return (note.id !== Number(id));
+         });
+         this.render();
+
+        }
     }
 
     editNote(){
@@ -200,7 +228,7 @@ class App{
                 return note;
             }
         });
-        this.displayNotes();
+        this.render();
     }
 
     changeNoteColor(color){
@@ -214,7 +242,7 @@ class App{
                 }
             });
 
-            this.displayNotes();
+            this.render();
     }
 
     selectNote(event){
@@ -242,8 +270,8 @@ class App{
                 <div class ="note-text">${note.text}</div>
                 <div class = "toolbar-container">
                     <div class = "toolbar">
-                    <img class = "toolbar-color" src ="https://icon.now.sh/palette">
-                    <img class = "toolbar-delete" src ="https://icon.now.sh/delete">
+                    <img  class = "toolbar-color" src ="https://icon.now.sh/palette">
+                    <img data-id = ${note.id} class = "toolbar-delete" src ="https://icon.now.sh/delete">
                         
                     </div>
                 </div>
