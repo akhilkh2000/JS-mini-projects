@@ -1,5 +1,6 @@
 // this file gives the display content for each route
 import view from '../utils/view.js';
+import Story from '../components/Story.js'
 
 export default async function stories(path){
     const stories = await getStories(path);
@@ -9,7 +10,8 @@ export default async function stories(path){
   
     let story = '';
     if(hasStories){
-         story = (stories.map(s => JSON.stringify(s)));
+         story = stories.map((s,i) => Story({...s , index : i+1})).join('');
+        //  console.log(typeof(story))
     } else{
          story = 'No stories';
     }
