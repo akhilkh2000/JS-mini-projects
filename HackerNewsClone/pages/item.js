@@ -2,29 +2,31 @@ import view from '../utils/view.js';
 import Story from '../components/Story.js';
 import baseUrl from '../utils/baseUrl.js';
 import Comment from '../components/Comment.js';
+
+
 export default async function Item(path){
     let hasError = false;
     let hasComments = false;
     let story = null;
-    try{
-         story = await getStory();
-         hasComments = story.comments.length > 0;
-    } catch(error){
-        hasError = true;
-        console.error(error);
-    }
-   if(hasError){
-       view.innerHTML = ` <div class = "error">Error in fetching comments! </div>`
-   } else{
-    view.innerHTML = `
-    <div>
-         ${Story(story)}
-    </div>
-    <hr/>
-    ${hasComments ? story.comments.map(comment => Comment(comment)).join('') : "NO COMMENTS!"}
-    `;
-
-   }
+    // error handling for API in case fetch fails
+        try{
+            story = await getStory();
+            hasComments = story.comments.length > 0;
+        } catch(error){
+            hasError = true;
+            console.error(error);
+        }
+        if(hasError){
+            view.innerHTML = ` <div class = "error">Error in fetching comments! </div>`
+        } else{
+            // we call the Comment function from Comment.js and pass the comment JSON object as param.
+            view.innerHTML = `
+                                <div>
+                                    ${Story(story)}
+                                </div>
+                                <hr/>
+                                ${hasComments ? story.comments.map(comment => Comment(comment)).join('') : "NO COMMENTS!"}`;
+         }
     
 }
 

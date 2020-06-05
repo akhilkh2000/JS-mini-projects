@@ -2,6 +2,9 @@
 import view from '../utils/view.js';
 import Story from '../components/Story.js'
 import baseUrl from '../utils/baseUrl.js'
+
+
+//async function to fetch stories from API
 export default async function stories(path){
     const stories = await getStories(path);
      
@@ -10,6 +13,7 @@ export default async function stories(path){
   
     let story = '';
     if(hasStories){
+        //here we call Story function on each story JSON object and use spread operator to add index to display in order
          story = stories.map((s,i) => Story({...s , index : i+1})).join('');
         //  console.log(typeof(story))
     } else{
