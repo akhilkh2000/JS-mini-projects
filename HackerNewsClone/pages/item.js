@@ -2,8 +2,20 @@ import view from '../utils/view.js';
 import Story from '../components/Story.js';
 import baseUrl from '../utils/baseUrl.js'
 export default async function Item(path){
-    const story = await getStory();
-    const hasComments = story.comments.length > 0;
+
+    let hasError = false;
+    let hasComments = false;
+    let story = null;
+    try{
+         story = await getStory();
+         hasComments = story.comments.length > 0;
+    } catch(error){
+        hasError = true;
+        console.error(error);
+    }
+   if(hasError){
+       view.innerHTML = ` <div class = "error">Error in fetching comments! </div>`
+   } else{
     view.innerHTML = `
     <div>
          ${Story(story)}
@@ -11,6 +23,9 @@ export default async function Item(path){
     <hr/>
     ${hasComments ? story.comments.map(comment => JSON.stringify(comment)).join('') : "NO COMMENTS!"}
     `;
+
+   }
+    
 }
 
 async function getStory(){
