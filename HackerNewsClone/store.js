@@ -36,9 +36,9 @@ function favoritesReducer (state = initialState,action){
     }
 }
 
-const action ={type:"ADD_FAVORITE" , payload: {favorite:{id:1 ,title:"story1"}}}
+// const action ={type:"ADD_FAVORITE" , payload: {favorite:{id:1 ,title:"story1"}}}
 
 const store = createStore(favoritesReducer);
-store.dispatch(action);
-console.log(store.getState);
+// store.dispatch(action);
+// console.log(store.getState);
 export default store;

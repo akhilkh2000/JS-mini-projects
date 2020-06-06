@@ -2,11 +2,14 @@
 import view from '../utils/view.js';
 import Story from '../components/Story.js'
 import baseUrl from '../utils/baseUrl.js'
+import store from '../store.js'
 
 
 //async function to fetch stories from API
 export default async function stories(path){
+    const {favorites} = store.getState(); // destructure to get favorites array
     const stories = await getStories(path);
+
      
     //console.log(stories);
     const hasStories = stories.length > 0;
