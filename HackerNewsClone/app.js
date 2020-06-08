@@ -1,6 +1,7 @@
 import RouterHandler from './router.js';
 
 // to get access to hash URL's and change link to active class to underline
+
 window.onhashchange = () =>{
     // console.log("changed");
     makeActiveLink();
@@ -21,6 +22,7 @@ function makeActiveLink (){
 }
 class App{
     constructor(){
+        makeActiveLink();
         console.log("App Works!");
         new RouterHandler(); // starting instance of Router
     }
