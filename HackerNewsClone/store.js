@@ -10,13 +10,14 @@ function createStore(reducer){
         getState : () => currentState,
         dispatch: (action) => {
             currentState = reducer(currentState,action);
+            localStorage.setItem('notes', JSON.stringify(currentState.favorites));
         }
     }
 
 }
 
 const initialState = {
-    favorites : []
+    favorites : JSON.parse(localStorage.getItem('notes')) || []
 };
 function favoritesReducer (state = initialState,action){
     switch(action.type){
